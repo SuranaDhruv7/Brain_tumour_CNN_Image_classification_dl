@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>NeuroScan | Brain Tumour Classifier</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            <span class="logo-icon">🧠</span>
+
+            <span>
+                Neuro<span class="blue">Scan</span>
+            </span>
+
+        </div>
+
+
+        <button
+            id="themeToggle"
+            class="theme-btn"
+            title="Toggle theme"
+            type="button"
+        >
+            🌙
+        </button>
+
+    </nav>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main>
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+            <div class="brain-circle">
+                🧠
+            </div>
+
+
+            <div class="tag">
+                ✦ AI-POWERED MRI ANALYSIS
+            </div>
+
+
+            <h1>
+
+                Brain Tumour
+
+                <span>
+                    Classification
+                </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                An AI-powered deep learning application that analyzes
+                brain MRI images using a Convolutional Neural Network.
+
+            </p>
+
+        </section>
+
+
+
+        <!-- ================= UPLOAD CARD ================= -->
+
+        <section class="upload-card">
+
+
+            <!-- CARD HEADER -->
+
+            <div class="card-header">
+
+                <div class="upload-icon">
+                    📤
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        Upload MRI Scan
+                    </h2>
+
+
+                    <p>
+                        Select a brain MRI image for AI-powered analysis
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= DROP AREA ================= -->
+
+            <div
+                id="dropArea"
+                class="drop-area"
+            >
+
+                <div class="drop-icon">
+                    🖼️
+                </div>
+
+
+                <h3>
+                    Drag & Drop your MRI image
+                </h3>
+
+
+                <p>
+                    or
+                </p>
+
+
+                <button
+                    type="button"
+                    class="upload-btn"
+                    onclick="document.getElementById('imageInput').click()"
+                >
+
+                    📁 Choose MRI Image
+
+                </button>
+
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept=".jpg,.jpeg,.png"
+                >
+
+
+                <small>
+                    JPG, JPEG or PNG • Max file size 10 MB
+                </small>
+
+            </div>
+
+
+
+            <!-- ================= UPLOAD MESSAGE ================= -->
+
+            <div
+                id="uploadMessage"
+                class="upload-message"
+            ></div>
+
+
+
+            <!-- ================= PREVIEW ================= -->
+
+            <div
+                id="previewContainer"
+                class="preview-container"
+            >
+
+
+                <!-- PREVIEW HEADER -->
+
+                <div class="preview-header">
+
+                    <div>
+
+                        <h3>
+                            Selected MRI Scan
+                        </h3>
+
+
+                        <p>
+                            Your image is ready for analysis
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="removeImage"
+                        class="remove-btn"
+                        type="button"
+                        title="Remove image"
+                    >
+
+                        ✕
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- IMAGE -->
+
+                <div class="preview-image-wrapper">
+
+                    <img
+                        id="imagePreview"
+                        src=""
+                        alt="Selected MRI scan"
+                    >
+
+
+                    <div class="image-check">
+                        ✓
+                    </div>
+
+                </div>
+
+
+
+                <!-- FILE DETAILS -->
+
+                <div class="file-details">
+
+
+                    <div class="file-info-icon">
+                        🖼️
+                    </div>
+
+
+                    <div class="file-info">
+
+                        <strong id="fileName">
+                            No image selected
+                        </strong>
+
+
+                        <span id="fileSize">
+                            --
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        id="changeImage"
+                        class="change-btn"
+                        type="button"
+                    >
+
+                        Change
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= ANALYZE BUTTON ================= -->
+
+            <button
+                id="predictBtn"
+                class="predict-btn"
+                type="button"
+                disabled
+            >
+
+                <span>
+                    🔍
+                </span>
+
+                Analyze MRI
+
+            </button>
+
+
+
+            <!-- ================= LOADING ================= -->
+
+            <div
+                id="loading"
+                class="loading"
+            >
+
+                <div class="spinner"></div>
+
+
+                <p>
+                    Preparing MRI scan...
+                </p>
+
+            </div>
+
+
+
+            <!-- ================= RESULT ================= -->
+
+            <div
+                id="resultCard"
+                class="result-card"
+            >
+
+                <div class="result-title">
+                    🎯 Prediction Result
+                </div>
+
+
+                <h2 id="prediction">
+                    --
+                </h2>
+
+
+                <p>
+                    Model Confidence
+                </p>
+
+
+                <div class="confidence-bar">
+
+                    <div id="confidenceFill"></div>
+
+                </div>
+
+
+                <strong id="confidence">
+                    --%
+                </strong>
+
+
+
+                <!-- PROBABILITIES -->
+
+                <div class="probabilities">
+
+
+                    <div class="probability-row">
+
+                        <span>
+                            Glioma
+                        </span>
+
+                        <strong id="gliomaProb">
+                            --%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="probability-row">
+
+                        <span>
+                            Meningioma
+                        </span>
+
+                        <strong id="meningiomaProb">
+                            --%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="probability-row">
+
+                        <span>
+                            No Tumor
+                        </span>
+
+                        <strong id="notumorProb">
+                            --%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="probability-row">
+
+                        <span>
+                            Pituitary
+                        </span>
+
+                        <strong id="pituitaryProb">
+                            --%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= HOW IT WORKS ================= -->
+
+        <section class="info-section">
+
+
+            <div class="section-title">
+
+                <span>
+                    ⚙️
+                </span>
+
+                <h2>
+                    How It Works
+                </h2>
+
+            </div>
+
+
+            <p class="section-subtitle">
+
+                From MRI image to AI prediction in a few simple steps.
+
+            </p>
+
+
+
+            <div class="steps">
+
+
+                <!-- STEP 1 -->
+
+                <div class="step">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+
+                    <div class="step-icon">
+                        📤
+                    </div>
+
+
+                    <h3>
+                        Upload
+                    </h3>
+
+
+                    <p>
+                        Upload a brain MRI image in JPG or PNG format.
+                    </p>
+
+                </div>
+
+
+
+                <!-- STEP 2 -->
+
+                <div class="step">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+
+                    <div class="step-icon">
+                        🧹
+                    </div>
+
+
+                    <h3>
+                        Preprocess
+                    </h3>
+
+
+                    <p>
+                        The image is resized and normalized before analysis.
+                    </p>
+
+                </div>
+
+
+
+                <!-- STEP 3 -->
+
+                <div class="step">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+
+                    <div class="step-icon">
+                        🧠
+                    </div>
+
+
+                    <h3>
+                        CNN Analysis
+                    </h3>
+
+
+                    <p>
+                        The trained CNN analyzes the MRI image.
+                    </p>
+
+                </div>
+
+
+
+                <!-- STEP 4 -->
+
+                <div class="step">
+
+                    <div class="step-number">
+                        04
+                    </div>
+
+
+                    <div class="step-icon">
+                        🎯
+                    </div>
+
+
+                    <h3>
+                        Prediction
+                    </h3>
+
+
+                    <p>
+                        The model provides a predicted class and confidence.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= MODEL INFORMATION ================= -->
+
+        <section class="model-section">
+
+
+            <div class="section-title">
+
+                <span>
+                    📊
+                </span>
+
+                <h2>
+                    Model Information
+                </h2>
+
+            </div>
+
+
+            <div class="model-grid">
+
+
+                <div class="model-card">
+
+                    <span>
+                        🤖
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Architecture
+                        </small>
+
+                        <strong>
+                            CNN
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="model-card">
+
+                    <span>
+                        🏷️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Classes
+                        </small>
+
+                        <strong>
+                            4
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="model-card">
+
+                    <span>
+                        🖼️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Input Size
+                        </small>
+
+                        <strong>
+                            128 × 128
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="model-card">
+
+                    <span>
+                        🎯
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Test Accuracy
+                        </small>
+
+                        <strong>
+                            93.77%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= CLASSIFICATIONS ================= -->
+
+        <section class="classes-section">
+
+
+            <div class="section-title">
+
+                <span>
+                    🧠
+                </span>
+
+                <h2>
+                    Supported Classifications
+                </h2>
+
+            </div>
+
+
+
+            <div class="class-list">
+
+
+                <div class="class-item">
+
+                    <span>
+                        🔵
+                    </span>
+
+                    <strong>
+                        Glioma
+                    </strong>
+
+                </div>
+
+
+
+                <div class="class-item">
+
+                    <span>
+                        🟣
+                    </span>
+
+                    <strong>
+                        Meningioma
+                    </strong>
+
+                </div>
+
+
+
+                <div class="class-item">
+
+                    <span>
+                        🟢
+                    </span>
+
+                    <strong>
+                        No Tumor
+                    </strong>
+
+                </div>
+
+
+
+                <div class="class-item">
+
+                    <span>
+                        🟠
+                    </span>
+
+                    <strong>
+                        Pituitary
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= DISCLAIMER ================= -->
+
+        <section class="disclaimer">
+
+
+            <div class="warning-icon">
+                ⚠️
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Important Notice
+                </h3>
+
+
+                <p>
+
+                    This application is developed for educational and
+                    research purposes only. The predictions generated
+                    by this model are not a medical diagnosis and
+                    should not replace professional medical advice.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+
+        <div class="footer-logo">
+
+            🧠 Neuro<span class="blue">Scan</span>
+
+        </div>
+
+
+        <p>
+            Brain Tumour Classification • CNN Deep Learning Project
+        </p>
+
+
+        <span>
+            Built with Python, Flask & TensorFlow
+        </span>
+
+    </footer>
+
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+
+    /* =========================
+       THEME
+    ========================= */
+
+    const themeToggle =
+        document.getElementById("themeToggle");
+
+
+    themeToggle.addEventListener("click", () => {
+
+        document.body.classList.toggle("dark");
+
+
+        if (
+            document.body.classList.contains("dark")
+        ) {
+
+            themeToggle.textContent = "☀️";
+
+        } else {
+
+            themeToggle.textContent = "🌙";
+
+        }
+
+    });
+
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const imageInput =
+        document.getElementById("imageInput");
+
+
+    const dropArea =
+        document.getElementById("dropArea");
+
+
+    const previewContainer =
+        document.getElementById("previewContainer");
+
+
+    const imagePreview =
+        document.getElementById("imagePreview");
+
+
+    const fileName =
+        document.getElementById("fileName");
+
+
+    const fileSize =
+        document.getElementById("fileSize");
+
+
+    const removeImage =
+        document.getElementById("removeImage");
+
+
+    const changeImage =
+        document.getElementById("changeImage");
+
+
+    const uploadMessage =
+        document.getElementById("uploadMessage");
+
+
+    const predictBtn =
+        document.getElementById("predictBtn");
+
+
+    const loading =
+        document.getElementById("loading");
+
+
+    const resultCard =
+        document.getElementById("resultCard");
+
+
+
+    /* =========================
+       CONSTANTS
+    ========================= */
+
+    const MAX_FILE_SIZE =
+        10 * 1024 * 1024;
+
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png"
+    ];
+
+
+
+    /* =========================
+       SHOW MESSAGE
+    ========================= */
+
+    function showMessage(message, type) {
+
+        uploadMessage.textContent =
+            message;
+
+
+        uploadMessage.className =
+            "upload-message " + type;
+
+    }
+
+
+
+    /* =========================
+       CLEAR MESSAGE
+    ========================= */
+
+    function clearMessage() {
+
+        uploadMessage.textContent =
+            "";
+
+
+        uploadMessage.className =
+            "upload-message";
+
+    }
+
+
+
+    /* =========================
+       FORMAT FILE SIZE
+    ========================= */
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+
+            return bytes + " B";
+
+        }
+
+
+        if (bytes < 1024 * 1024) {
+
+            return (
+                bytes / 1024
+            ).toFixed(1) + " KB";
+
+        }
+
+
+        return (
+            bytes / (1024 * 1024)
+        ).toFixed(2) + " MB";
+
+    }
+
+
+
+    /* =========================
+       VALIDATE FILE
+    ========================= */
+
+    function validateFile(file) {
+
+        if (!file) {
+
+            return false;
+
+        }
+
+
+        if (!allowedTypes.includes(file.type)) {
+
+            showMessage(
+                "Please upload a JPG, JPEG or PNG image.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+
+        if (file.size > MAX_FILE_SIZE) {
+
+            showMessage(
+                "File size must be less than 10 MB.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+
+    /* =========================
+       SHOW IMAGE
+    ========================= */
+
+    function showImage(file) {
+
+        clearMessage();
+
+
+        if (!validateFile(file)) {
+
+            resetUpload();
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function(event) {
+
+
+            imagePreview.src =
+                event.target.result;
+
+
+            fileName.textContent =
+                file.name;
+
+
+            fileSize.textContent =
+                formatFileSize(file.size);
+
+
+            previewContainer.style.display =
+                "block";
+
+
+            predictBtn.disabled =
+                false;
+
+
+            showMessage(
+                "MRI image selected successfully.",
+                "success"
+            );
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    }
+
+
+
+    /* =========================
+       FILE INPUT
+    ========================= */
+
+    imageInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                imageInput.files[0];
+
+
+            showImage(file);
+
+        }
+    );
+
+
+
+    /* =========================
+       DRAG OVER
+    ========================= */
+
+    dropArea.addEventListener(
+        "dragover",
+        (event) => {
+
+            event.preventDefault();
+
+
+            dropArea.classList.add(
+                "dragging"
+            );
+
+        }
+    );
+
+
+
+    /* =========================
+       DRAG LEAVE
+    ========================= */
+
+    dropArea.addEventListener(
+        "dragleave",
+        () => {
+
+            dropArea.classList.remove(
+                "dragging"
+            );
+
+        }
+    );
+
+
+
+    /* =========================
+       DROP
+    ========================= */
+
+    dropArea.addEventListener(
+        "drop",
+        (event) => {
+
+            event.preventDefault();
+
+
+            dropArea.classList.remove(
+                "dragging"
+            );
+
+
+            const file =
+                event.dataTransfer.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            const dataTransfer =
+                new DataTransfer();
+
+
+            dataTransfer.items.add(file);
+
+
+            imageInput.files =
+                dataTransfer.files;
+
+
+            showImage(file);
+
+        }
+    );
+
+
+
+    /* =========================
+       REMOVE IMAGE
+    ========================= */
+
+    removeImage.addEventListener(
+        "click",
+        () => {
+
+            resetUpload();
+
+        }
+    );
+
+
+
+    /* =========================
+       CHANGE IMAGE
+    ========================= */
+
+    changeImage.addEventListener(
+        "click",
+        () => {
+
+            imageInput.click();
+
+        }
+    );
+
+
+
+    /* =========================
+       RESET UPLOAD
+    ========================= */
+
+    function resetUpload() {
+
+        imageInput.value =
+            "";
+
+
+        imagePreview.src =
+            "";
+
+
+        fileName.textContent =
+            "No image selected";
+
+
+        fileSize.textContent =
+            "--";
+
+
+        previewContainer.style.display =
+            "none";
+
+
+        predictBtn.disabled =
+            true;
+
+
+        resultCard.style.display =
+            "none";
+
+
+        loading.style.display =
+            "none";
+
+
+        clearMessage();
+
+    }
+
+
+
+    /* =========================
+       ANALYZE BUTTON
+    ========================= */
+
+    predictBtn.addEventListener(
+        "click",
+        async () => {
+
+            if (!imageInput.files.length) {
+                return;
+            }
+
+            const file = imageInput.files[0];
+
+            loading.style.display = "block";
+            resultCard.style.display = "none";
+            predictBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+
+                const response = await fetch(
+                    "/predict",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "Prediction failed."
+                    );
+                }
+
+                const displayNames = {
+                    "glioma": "Glioma",
+                    "meningioma": "Meningioma",
+                    "notumor": "No Tumor",
+                    "pituitary": "Pituitary"
+                };
+
+                document.getElementById("prediction").textContent =
+                    displayNames[data.prediction] || data.prediction;
+
+                document.getElementById("confidence").textContent =
+                    data.confidence + "%";
+
+                document.getElementById("confidenceFill").style.width =
+                    data.confidence + "%";
+
+                document.getElementById("gliomaProb").textContent =
+                    data.probabilities.glioma + "%";
+
+                document.getElementById("meningiomaProb").textContent =
+                    data.probabilities.meningioma + "%";
+
+                document.getElementById("notumorProb").textContent =
+                    data.probabilities.notumor + "%";
+
+                document.getElementById("pituitaryProb").textContent =
+                    data.probabilities.pituitary + "%";
+
+                resultCard.style.display = "block";
+
+            } catch (error) {
+
+                showMessage(
+                    error.message,
+                    "error"
+                );
+
+            } finally {
+
+                loading.style.display = "none";
+                predictBtn.disabled = false;
+
+            }
+        }
+    );
+
+
+    </script>
+
+</body>
+
+</html>
